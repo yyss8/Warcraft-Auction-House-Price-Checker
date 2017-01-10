@@ -25,6 +25,7 @@ export default class extends React.Component{
             itemComps:[],
             totalPrice:0
         }
+        this.priceToTextWithCoins= this.priceToTextWithCoins.bind(this);
     }
 
     componentWillReceiveProps(nextProps){
@@ -57,6 +58,27 @@ export default class extends React.Component{
         this.setState({selectedItem:{},itemComps:[],totalPrice:0});
     }
 
+    priceToTextWithCoins(price){
+        return (
+                <span>
+                 {price.length > 4 &&  price.slice(0,price.length - 4) != "" && 
+                    <span> { price.slice(0,price.length - 4) } 
+                        <img alt='g' src='/img/gold.png' /> 
+                 </span>}   
+                
+                {price.length > 2 && price.slice(price.length -4,price.length - 2) != "" &&
+                    <span> { price.slice(price.length -4,price.length - 2) }
+                        <img alt='g' src='/img/silver.png' /> 
+                    </span>}
+                
+                 {price.length > 0 && price.slice(price.length-2) != "" &&
+                    <span> { price.slice(price.length-2) }
+                        <img alt='g' src='/img/copper.png' /> 
+                    </span>}
+                </span>
+        )
+    }
+
     render(){
         return(
             <div style={ {marginTop:10} }>
@@ -81,21 +103,7 @@ export default class extends React.Component{
                                         <span className='h4'> { comp.enName } </span>
                                         <span>&nbsp;<i className='fa fa-times'></i> &nbsp; <b>{ comp.quantity }</b> </span>
                                         <span className={ comp.resultStyle } style={ {marginTop:7} } > 
-                                        { comp.price.length > 4 &&  comp.price.slice(0,comp.price.length - 4) != "" && 
-                                            <span> { comp.price.slice(0,comp.price.length - 4) } 
-                                                <img alt='g' src='/img/gold.png' /> 
-                                            </span>
-                                        }
-                                        { comp.price.length > 2 && comp.price.slice(comp.price.length -4,comp.price.length - 2) != "" &&
-                                            <span> { comp.price.slice(comp.price.length -4,comp.price.length - 2) }
-                                                <img alt='g' src='/img/silver.png' /> 
-                                            </span>
-                                        }
-                                        { comp.price.length > 0 && comp.price.slice(comp.price.length-2) != "" &&
-                                            <span> { comp.price.slice(comp.price.length-2) }
-                                                <img alt='g' src='/img/copper.png' /> 
-                                            </span>
-                                        }
+                                        { this.priceToTextWithCoins(comp.price) }
                                         </span>
                                     </span> 
                                 )
@@ -116,21 +124,7 @@ export default class extends React.Component{
                         <div className='col-md-offset-3 col-md-7'>
                             <span className='pull-right'><img src='/img/equal.png' width='20px'/> &nbsp; 
 
-                            { this.state.totalPrice.length > 4 &&  this.state.totalPrice.slice(0,this.state.totalPrice.length - 4) != "" && 
-                                <span> { this.state.totalPrice.slice(0,this.state.totalPrice.length - 4) } 
-                                    <img alt='g' src='/img/gold.png' /> 
-                                </span>
-                            }
-                            { this.state.totalPrice.length > 2 && this.state.totalPrice.slice(this.state.totalPrice.length -4,this.state.totalPrice.length - 2) != "" &&
-                                <span> { this.state.totalPrice.slice(this.state.totalPrice.length -4,this.state.totalPrice.length - 2) }
-                                    <img alt='g' src='/img/silver.png' /> 
-                                </span>
-                            }
-                            { this.state.totalPrice.length > 0 && this.state.totalPrice.slice(this.state.totalPrice.length-2) != "" &&
-                                <span> { this.state.totalPrice.slice(this.state.totalPrice.length-2) }
-                                    <img alt='g' src='/img/copper.png' /> 
-                                </span>
-                            }
+                            { this.priceToTextWithCoins (this.state.totalPrice) }
                                 
                             </span>
                         </div>
