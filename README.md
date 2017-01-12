@@ -11,7 +11,9 @@ Database: Mongodb
 
 # 01/11/17 Updates:
   1. New Search Method Added
+  
   search result from user typing only include up to 8 matched results.
+  
   search result from search button now include entire matched resultss with sepearted pages and each page contains 8 results. 
   
   2. Simple Control Panel Added For Creating Items
