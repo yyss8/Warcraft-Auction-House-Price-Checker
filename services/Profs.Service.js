@@ -2,7 +2,7 @@ const mongodb = require("mongodb")
 const assert = require("assert")
 const request = require("superagent");
 
-const url = "mongodb://scitnet.com:5333/vue"
+const url = "//////////////////"
 
 class ProfServices{
     get_items_part(dbName,kyWrds,callback){
