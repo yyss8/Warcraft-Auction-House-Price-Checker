@@ -14,6 +14,6 @@ Database: Mongodb
   
   2.Simple Control Panel Added For Creating Items
 
-      Item Name/Icon/Quantity/Auctionable Status are automatically fetched from blizzard dev api
+    Item Name/Icon/Quantity/Auctionable Status Are Automatically Fetched From Blizzard Dev Api
 
   3.Bugs Fixes
