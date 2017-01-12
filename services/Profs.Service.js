@@ -2,7 +2,7 @@ const mongodb = require("mongodb")
 const assert = require("assert")
 const request = require("superagent");
 
-const url = "//////////////////"
+const url = "@link to your mongodb"
 
 class ProfServices{
     get_items_part(dbName,kyWrds,callback){
