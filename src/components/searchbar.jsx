@@ -1,13 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { selectItem,loadComps,loadPrice,updateTime} from "../actions/items.js"
+import update from "react-addons-update";
 
 const professions = ["Alchemy","Blacksmithing","Cooking","Enchanting","Engineering","First Aid","Inscription","Jewelcrafting","Leatherworking","Tailoring"];
 const resultTxtStyle = {margin:"3px 0 0 0"};
+let typingTimer;
 
 const searchStyle = {
     overflowY:"auto",
-    maxHeight:300
+    maxHeight:400
 }
 
 @connect(store =>{
@@ -25,12 +27,18 @@ export default class extends React.Component{
             selectedDb:"",
             hasError:false,
             errorMsg:"",
-            items:[]
+            items:[],
+            currentItems:{
+                pageNum:1,
+                items:[]
+            }
         };
 
         this.getItems = this.getItems.bind(this);
+        this.getAllItems = this.getAllItems.bind(this);
         this.getItemComps = this.getItemComps.bind(this);
         this.getUpdateTime = this.getUpdateTime.bind(this);
+        this.getPageItems = this.getPageItems.bind(this);
     }
 
     kyWrdChange(e){
@@ -41,9 +49,17 @@ export default class extends React.Component{
 
         if (e.target.value != ""){
             this.setState({schKyWrds:e.target.value});
-            setTimeout(function(){
+            //wait 3 seconds until user finish typing.
+            this.setState({
+                currentItems:{
+                    pageNum:1,
+                    items:[{name:"Loading"}]
+            }});
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() =>{
                 _this.getItems();
-            },100);
+            }, 1200);
+           
         }else{
             this.clearKyWrds();
         }
@@ -57,6 +73,7 @@ export default class extends React.Component{
     }
 
     selectItem(item){
+        this.clearKyWrds();
         this.props.dispatch(selectItem(item));
         this.getItemComps(item.item); //get item number
         this.setState({items:[]});
@@ -71,10 +88,8 @@ export default class extends React.Component{
                     this.props.dispatch(loadComps(r.result.comp));
                     const items = {"main":item,comps:[]}
                     r.result.comp.forEach((c) => {
-                        if (c.isAuctionable){
-                            let compItems= {comp:c.compItem,quantity:c.quantity}
-                            items.comps.push(compItems);
-                        }
+                        const compItems= {comp:c.compItem,quantity:c.quantity,isAuctionable:c.isAuctionable}
+                        items.comps.push(compItems);
                     });
                     this.getItemPrice(items);
                 }
@@ -103,6 +118,57 @@ export default class extends React.Component{
     }
 
     getItems(){
+        if (this.state.schKyWrds.length < 5){
+            //search top 8 matched result
+            if (this.state.schKyWrds == ""){
+                this.setState({
+                    hasError:true,
+                    errorMsg:"Please Enter Item Name."
+                });
+            }else if (this.state.schType == "Professions"){
+                this.setState({
+                    hasError:true,
+                    errorMsg:"Please Select A Profession."
+                });
+            }else{
+                $.ajax({
+                    url: `/api/professions/${this.state.schType}/part/${this.state.schKyWrds}`,
+                    type:'GET',
+                    success: (r) =>{
+                        if (r.result.length != 0){
+                            let itemAry = []
+                            r.result.forEach((result) => {
+                                let item = {icon:result.icon,item:result.item}
+                                if (result.enName == undefined){
+                                    item["name"] = result.cnName;
+                                }else{
+                                    item["name"] = result.enName;
+                                }
+                                itemAry.push(item);
+                            });
+                            const curItems = this.getPageItems(itemAry,1);
+                            this.setState({
+                                items:itemAry,
+                                currentItems:curItems
+                            });      
+                        }else{
+                            const curItems = this.getPageItems([{name:"No Result"}],1);
+                            this.setState({
+                                items:[{name:"No Result"}],
+                                currentItems:curItems
+                            });
+                        }
+                    }
+                });
+            }
+        }else{
+            // search all results
+            this.getAllItems();
+        }
+    }
+
+    getAllItems(){
+        clearTimeout(typingTimer);
         if (this.state.schKyWrds == ""){
             this.setState({
                 hasError:true,
@@ -129,13 +195,30 @@ export default class extends React.Component{
                             }
                             itemAry.push(item);
                         });
-                        this.setState({items:itemAry});
+                        const curItems = this.getPageItems(itemAry,1);  //get result item for first page
+                        this.setState({
+                            items:itemAry,
+                            currentItems:curItems
+                        });
                     }else{
-                        this.setState({items:[{name:"No Result"}]});
+                        const curItems = this.getPageItems([{name:"No Result"}],1);
+                        this.setState({
+                            items:[{name:"No Result"}],
+                            currentItems:curItems
+                        });
                     }
                 }
             });
         }
+    }
+
+    getPageItems(items,pg){
+
+        const pgItemNum = 8; //8 item for each result page
+
+        const curItems = items.slice(pg * pgItemNum - pgItemNum,pg * pgItemNum);
+
+        return update(this.state.currentItems,{$set:{pageNum:pg,items:curItems}});
     }
 
     clearKyWrds(){
@@ -143,8 +226,14 @@ export default class extends React.Component{
             schKyWrds:"",
             hasError:false,
             errorMsg:"",
-            items:[]
+            items:[],
+            currentItems:{pageNum:1,items:[]}
         });
+    }
+
+    switchResultPg(pg){
+        const nextItems = this.getPageItems(this.state.items,pg);
+        this.setState({currentItems:nextItems});
     }
 
     componentDidMount(){
@@ -174,7 +263,9 @@ export default class extends React.Component{
                                 <span className="caret"></span>    
                             </button>
                             <ul className="dropdown-menu">
+                            
                                 {professions.map(prof => {
+                                    
                                     const selectType = this.selectType.bind(this,prof);
                                     return (<li key={prof}><a href='javascript:void(0)' onClick={ selectType } >&nbsp; {prof}</a></li>)
                                 })}
@@ -184,14 +275,16 @@ export default class extends React.Component{
                     
                     <input className='form-control' type='text' value={ this.state.schKyWrds } onChange={ e=> this.kyWrdChange(e) } placeholder='Enter Item Name'/>
                     <div className="input-group-btn">
-                        <button className="btn btn-default" type="button" onClick={ this.getItems }><i className="glyphicon glyphicon-search"></i></button>
+                        <button className="btn btn-default" type="button" onClick={ this.getAllItems }><i className="glyphicon glyphicon-search"></i></button>
                         {this.state.schKyWrds != "" && <button className="btn btn-default" type="button" onClick={ () => this.clearKyWrds() } ><i className="glyphicon glyphicon-remove"></i></button>}
                     </div>
                 </div>
+                
                 {this.state.hasError && <div className='alert alert-danger'>{this.state.errorMsg}</div>}
                 <ul className='nav nav-second-level' style={searchStyle}>
-                    {this.state.items.map(item => {
-                        if (item.name != "No Result"){
+                    {this.state.currentItems.items.map(item => {
+                        if (item.name != "No Result" && item.name != "Loading"){
+                            //display no result
                             const selectItem = this.selectItem.bind(this,item);
                             return(<a key={item.item} className='list-group-item list-group-item-action' href='javascript:void(0)' onClick={ selectItem }>
                                         <img src={ "http://media.blizzard.com/wow/icons/56/" + item.icon + ".jpg" } width='30' />
@@ -199,13 +292,50 @@ export default class extends React.Component{
                                     </a>
                                 )
                             
-                        }
+                        }else if (item.name =='Loading'){
+                            //display Loading
                             return(<a key={item.name} className='list-group-item list-group-item-action' href='javascript:void(0)'>
-                                        <span className="glyphicon glyphicon-question-sign" />
+                                        <span className='fa fa-circle-o-notch fa-spin' />
                                         <span className='pull-right'>{ item.name }</span>
                                     </a>
-                                )                             
+                                )
+                        }   
+                        //display results from returned item list
+                        return(<a key={item.name} className='list-group-item list-group-item-action' href='javascript:void(0)'>
+                                    <span className="glyphicon glyphicon-question-sign" />
+                                    <span className='pull-right'>{ item.name }</span>
+                                </a>
+                            )                             
                     })
+                    }
+
+                    {this.state.items.length > 8 &&
+                        //display only 8 results for each page
+                        <div className='list-group-item list-group-item-action' style={{backgroundColor:"#fff"}}>
+                            <ul className="pagination">
+                                {  this.state.currentItems.pageNum != 1 && 
+                                    <li>
+                                        <a href="javascript:void(0)" aria-label="Previous" onClick={ () => this.switchResultPg(this.state.currentItems.pageNum - 1) } >
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                }
+
+                                <li>
+                                    <span aria-hidden="true">{ 
+                                        (this.state.currentItems.pageNum * 8 - 7).toString() + " - " + (this.state.items.length - ((this.state.currentItems.pageNum - 1)* 8) > 8 ? (this.state.currentItems.pageNum * 8) : (this.state.currentItems.pageNum * 8 - 8) + this.state.items.length - (this.state.currentItems.pageNum -1) * 8   ).toString() + " of "  + this.state.items.length.toString()
+                                    }</span>
+                                </li>
+
+                                { this.state.currentItems.pageNum * 8 < this.state.items.length && 
+                                    <li>
+                                        <a href="javascript:void(0)" aria-label="Next" onClick={ () => this.switchResultPg(this.state.currentItems.pageNum + 1) }>
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     }
                 </ul>
             </div>

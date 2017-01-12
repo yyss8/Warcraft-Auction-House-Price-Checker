@@ -1,5 +1,3 @@
-const cf = require("crossfilter");
-
 let auctionLib = "";
 
 function itemPrice(comp,callback){

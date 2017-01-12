@@ -1,46 +1,4 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
-
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
-
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-
-
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
-/************************************************************************/
-/******/ ([
+webpackJsonp([0,1],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -23914,6 +23872,38 @@
 	                            "div",
 	                            { className: "col-md-6", style: { minWidth: 330, minHeight: 300, backgroundColor: "#D1D6F2" } },
 	                            _react2.default.createElement("br", null),
+	                            _react2.default.createElement(
+	                                "ul",
+	                                { className: "nav nav-tabs", style: { borderBottomColor: "#2e6da4" } },
+	                                _react2.default.createElement(
+	                                    "li",
+	                                    { role: "presentation", className: "active" },
+	                                    _react2.default.createElement(
+	                                        "a",
+	                                        { href: "javascript:void(0)", style: { borderColor: "#2e6da4", borderBottomColor: "transparent" } },
+	                                        "New"
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    "li",
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        "a",
+	                                        { href: "javascript:void(0)" },
+	                                        "Modify"
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    "li",
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        "a",
+	                                        { href: "javascript:void(0)" },
+	                                        "User"
+	                                    )
+	                                )
+	                            ),
+	                            _react2.default.createElement("br", null),
 	                            _react2.default.createElement(_additem2.default, null)
 	                        )
 	                    )
@@ -23950,6 +23940,10 @@
 
 	var _items = __webpack_require__(219);
 
+	var _reactAddonsUpdate = __webpack_require__(222);
+
+	var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23960,10 +23954,11 @@
 
 	var professions = ["Alchemy", "Blacksmithing", "Cooking", "Enchanting", "Engineering", "First Aid", "Inscription", "Jewelcrafting", "Leatherworking", "Tailoring"];
 	var resultTxtStyle = { margin: "3px 0 0 0" };
+	var typingTimer = void 0;
 
 	var searchStyle = {
 	    overflowY: "auto",
-	    maxHeight: 300
+	    maxHeight: 400
 	};
 
 	var _default = (_dec = (0, _reactRedux.connect)(function (store) {
@@ -23984,12 +23979,18 @@
 	            selectedDb: "",
 	            hasError: false,
 	            errorMsg: "",
-	            items: []
+	            items: [],
+	            currentItems: {
+	                pageNum: 1,
+	                items: []
+	            }
 	        };
 
 	        _this2.getItems = _this2.getItems.bind(_this2);
+	        _this2.getAllItems = _this2.getAllItems.bind(_this2);
 	        _this2.getItemComps = _this2.getItemComps.bind(_this2);
 	        _this2.getUpdateTime = _this2.getUpdateTime.bind(_this2);
+	        _this2.getPageItems = _this2.getPageItems.bind(_this2);
 	        return _this2;
 	    }
 
@@ -24003,9 +24004,16 @@
 
 	            if (e.target.value != "") {
 	                this.setState({ schKyWrds: e.target.value });
-	                setTimeout(function () {
+	                //wait 3 seconds until user finish typing.
+	                this.setState({
+	                    currentItems: {
+	                        pageNum: 1,
+	                        items: [{ name: "Loading" }]
+	                    } });
+	                clearTimeout(typingTimer);
+	                typingTimer = setTimeout(function () {
 	                    _this.getItems();
-	                }, 100);
+	                }, 1200);
 	            } else {
 	                this.clearKyWrds();
 	            }
@@ -24021,6 +24029,7 @@
 	    }, {
 	        key: 'selectItem',
 	        value: function selectItem(item) {
+	            this.clearKyWrds();
 	            this.props.dispatch((0, _items.selectItem)(item));
 	            this.getItemComps(item.item); //get item number
 	            this.setState({ items: [] });
@@ -24039,10 +24048,8 @@
 	                            _this3.props.dispatch((0, _items.loadComps)(r.result.comp));
 	                            var items = { "main": item, comps: [] };
 	                            r.result.comp.forEach(function (c) {
-	                                if (c.isAuctionable) {
-	                                    var compItems = { comp: c.compItem, quantity: c.quantity };
-	                                    items.comps.push(compItems);
-	                                }
+	                                var compItems = { comp: c.compItem, quantity: c.quantity, isAuctionable: c.isAuctionable };
+	                                items.comps.push(compItems);
 	                            });
 	                            _this3.getItemPrice(items);
 	                        })();
@@ -24081,6 +24088,62 @@
 	        value: function getItems() {
 	            var _this6 = this;
 
+	            if (this.state.schKyWrds.length < 5) {
+	                //search top 8 matched result
+	                if (this.state.schKyWrds == "") {
+	                    this.setState({
+	                        hasError: true,
+	                        errorMsg: "Please Enter Item Name."
+	                    });
+	                } else if (this.state.schType == "Professions") {
+	                    this.setState({
+	                        hasError: true,
+	                        errorMsg: "Please Select A Profession."
+	                    });
+	                } else {
+	                    $.ajax({
+	                        url: '/api/professions/' + this.state.schType + '/part/' + this.state.schKyWrds,
+	                        type: 'GET',
+	                        success: function success(r) {
+	                            if (r.result.length != 0) {
+	                                (function () {
+	                                    var itemAry = [];
+	                                    r.result.forEach(function (result) {
+	                                        var item = { icon: result.icon, item: result.item };
+	                                        if (result.enName == undefined) {
+	                                            item["name"] = result.cnName;
+	                                        } else {
+	                                            item["name"] = result.enName;
+	                                        }
+	                                        itemAry.push(item);
+	                                    });
+	                                    var curItems = _this6.getPageItems(itemAry, 1);
+	                                    _this6.setState({
+	                                        items: itemAry,
+	                                        currentItems: curItems
+	                                    });
+	                                })();
+	                            } else {
+	                                var curItems = _this6.getPageItems([{ name: "No Result" }], 1);
+	                                _this6.setState({
+	                                    items: [{ name: "No Result" }],
+	                                    currentItems: curItems
+	                                });
+	                            }
+	                        }
+	                    });
+	                }
+	            } else {
+	                // search all results
+	                this.getAllItems();
+	            }
+	        }
+	    }, {
+	        key: 'getAllItems',
+	        value: function getAllItems() {
+	            var _this7 = this;
+
+	            clearTimeout(typingTimer);
 	            if (this.state.schKyWrds == "") {
 	                this.setState({
 	                    hasError: true,
@@ -24108,14 +24171,32 @@
 	                                    }
 	                                    itemAry.push(item);
 	                                });
-	                                _this6.setState({ items: itemAry });
+	                                var curItems = _this7.getPageItems(itemAry, 1); //get result item for first page
+	                                _this7.setState({
+	                                    items: itemAry,
+	                                    currentItems: curItems
+	                                });
 	                            })();
 	                        } else {
-	                            _this6.setState({ items: [{ name: "No Result" }] });
+	                            var curItems = _this7.getPageItems([{ name: "No Result" }], 1);
+	                            _this7.setState({
+	                                items: [{ name: "No Result" }],
+	                                currentItems: curItems
+	                            });
 	                        }
 	                    }
 	                });
 	            }
+	        }
+	    }, {
+	        key: 'getPageItems',
+	        value: function getPageItems(items, pg) {
+
+	            var pgItemNum = 8; //8 item for each result page
+
+	            var curItems = items.slice(pg * pgItemNum - pgItemNum, pg * pgItemNum);
+
+	            return (0, _reactAddonsUpdate2.default)(this.state.currentItems, { $set: { pageNum: pg, items: curItems } });
 	        }
 	    }, {
 	        key: 'clearKyWrds',
@@ -24124,8 +24205,15 @@
 	                schKyWrds: "",
 	                hasError: false,
 	                errorMsg: "",
-	                items: []
+	                items: [],
+	                currentItems: { pageNum: 1, items: [] }
 	            });
+	        }
+	    }, {
+	        key: 'switchResultPg',
+	        value: function switchResultPg(pg) {
+	            var nextItems = this.getPageItems(this.state.items, pg);
+	            this.setState({ currentItems: nextItems });
 	        }
 	    }, {
 	        key: 'componentDidMount',
@@ -24135,7 +24223,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this7 = this;
+	            var _this8 = this;
 
 	            return _react2.default.createElement(
 	                'div',
@@ -24195,7 +24283,8 @@
 	                                'ul',
 	                                { className: 'dropdown-menu' },
 	                                professions.map(function (prof) {
-	                                    var selectType = _this7.selectType.bind(_this7, prof);
+
+	                                    var selectType = _this8.selectType.bind(_this8, prof);
 	                                    return _react2.default.createElement(
 	                                        'li',
 	                                        { key: prof },
@@ -24211,20 +24300,20 @@
 	                        )
 	                    ),
 	                    _react2.default.createElement('input', { className: 'form-control', type: 'text', value: this.state.schKyWrds, onChange: function onChange(e) {
-	                            return _this7.kyWrdChange(e);
+	                            return _this8.kyWrdChange(e);
 	                        }, placeholder: 'Enter Item Name' }),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'input-group-btn' },
 	                        _react2.default.createElement(
 	                            'button',
-	                            { className: 'btn btn-default', type: 'button', onClick: this.getItems },
+	                            { className: 'btn btn-default', type: 'button', onClick: this.getAllItems },
 	                            _react2.default.createElement('i', { className: 'glyphicon glyphicon-search' })
 	                        ),
 	                        this.state.schKyWrds != "" && _react2.default.createElement(
 	                            'button',
 	                            { className: 'btn btn-default', type: 'button', onClick: function onClick() {
-	                                    return _this7.clearKyWrds();
+	                                    return _this8.clearKyWrds();
 	                                } },
 	                            _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' })
 	                        )
@@ -24238,9 +24327,10 @@
 	                _react2.default.createElement(
 	                    'ul',
 	                    { className: 'nav nav-second-level', style: searchStyle },
-	                    this.state.items.map(function (item) {
-	                        if (item.name != "No Result") {
-	                            var selectItem = _this7.selectItem.bind(_this7, item);
+	                    this.state.currentItems.items.map(function (item) {
+	                        if (item.name != "No Result" && item.name != "Loading") {
+	                            //display no result
+	                            var selectItem = _this8.selectItem.bind(_this8, item);
 	                            return _react2.default.createElement(
 	                                'a',
 	                                { key: item.item, className: 'list-group-item list-group-item-action', href: 'javascript:void(0)', onClick: selectItem },
@@ -24251,7 +24341,20 @@
 	                                    item.name
 	                                )
 	                            );
+	                        } else if (item.name == 'Loading') {
+	                            //display Loading
+	                            return _react2.default.createElement(
+	                                'a',
+	                                { key: item.name, className: 'list-group-item list-group-item-action', href: 'javascript:void(0)' },
+	                                _react2.default.createElement('span', { className: 'fa fa-circle-o-notch fa-spin' }),
+	                                _react2.default.createElement(
+	                                    'span',
+	                                    { className: 'pull-right' },
+	                                    item.name
+	                                )
+	                            );
 	                        }
+	                        //display results from returned item list
 	                        return _react2.default.createElement(
 	                            'a',
 	                            { key: item.name, className: 'list-group-item list-group-item-action', href: 'javascript:void(0)' },
@@ -24262,7 +24365,56 @@
 	                                item.name
 	                            )
 	                        );
-	                    })
+	                    }),
+	                    this.state.items.length > 8 &&
+	                    //display only 8 results for each page
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'list-group-item list-group-item-action', style: { backgroundColor: "#fff" } },
+	                        _react2.default.createElement(
+	                            'ul',
+	                            { className: 'pagination' },
+	                            this.state.currentItems.pageNum != 1 && _react2.default.createElement(
+	                                'li',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'a',
+	                                    { href: 'javascript:void(0)', 'aria-label': 'Previous', onClick: function onClick() {
+	                                            return _this8.switchResultPg(_this8.state.currentItems.pageNum - 1);
+	                                        } },
+	                                    _react2.default.createElement(
+	                                        'span',
+	                                        { 'aria-hidden': 'true' },
+	                                        '\xAB'
+	                                    )
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'span',
+	                                    { 'aria-hidden': 'true' },
+	                                    (this.state.currentItems.pageNum * 8 - 7).toString() + " - " + (this.state.items.length - (this.state.currentItems.pageNum - 1) * 8 > 8 ? this.state.currentItems.pageNum * 8 : this.state.currentItems.pageNum * 8 - 8 + this.state.items.length - (this.state.currentItems.pageNum - 1) * 8).toString() + " of " + this.state.items.length.toString()
+	                                )
+	                            ),
+	                            this.state.currentItems.pageNum * 8 < this.state.items.length && _react2.default.createElement(
+	                                'li',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'a',
+	                                    { href: 'javascript:void(0)', 'aria-label': 'Next', onClick: function onClick() {
+	                                            return _this8.switchResultPg(_this8.state.currentItems.pageNum + 1);
+	                                        } },
+	                                    _react2.default.createElement(
+	                                        'span',
+	                                        { 'aria-hidden': 'true' },
+	                                        '\xBB'
+	                                    )
+	                                )
+	                            )
+	                        )
+	                    )
 	                )
 	            );
 	        }
@@ -24367,6 +24519,7 @@
 	            itemComps: [],
 	            totalPrice: 0
 	        };
+	        _this.priceToTextWithCoins = _this.priceToTextWithCoins.bind(_this);
 	        return _this;
 	    }
 
@@ -24401,6 +24554,35 @@
 	        key: 'clearResult',
 	        value: function clearResult() {
 	            this.setState({ selectedItem: {}, itemComps: [], totalPrice: 0 });
+	        }
+	    }, {
+	        key: 'priceToTextWithCoins',
+	        value: function priceToTextWithCoins(price) {
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                price.length > 4 && price.slice(0, price.length - 4) != "" && _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    ' ',
+	                    price.slice(0, price.length - 4),
+	                    _react2.default.createElement('img', { alt: 'g', src: '/img/gold.png' })
+	                ),
+	                price.length > 2 && price.slice(price.length - 4, price.length - 2) != "" && _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    ' ',
+	                    price.slice(price.length - 4, price.length - 2),
+	                    _react2.default.createElement('img', { alt: 'g', src: '/img/silver.png' })
+	                ),
+	                price.length > 0 && price.slice(price.length - 2) != "" && _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    ' ',
+	                    price.slice(price.length - 2),
+	                    _react2.default.createElement('img', { alt: 'g', src: '/img/copper.png' })
+	                )
+	            );
 	        }
 	    }, {
 	        key: 'render',
@@ -24462,27 +24644,7 @@
 	                            _react2.default.createElement(
 	                                'span',
 	                                { className: comp.resultStyle, style: { marginTop: 7 } },
-	                                comp.price.length > 4 && comp.price.slice(0, comp.price.length - 4) != "" && _react2.default.createElement(
-	                                    'span',
-	                                    null,
-	                                    ' ',
-	                                    comp.price.slice(0, comp.price.length - 4),
-	                                    _react2.default.createElement('img', { alt: 'g', src: '/img/gold.png' })
-	                                ),
-	                                comp.price.length > 2 && comp.price.slice(comp.price.length - 4, comp.price.length - 2) != "" && _react2.default.createElement(
-	                                    'span',
-	                                    null,
-	                                    ' ',
-	                                    comp.price.slice(comp.price.length - 4, comp.price.length - 2),
-	                                    _react2.default.createElement('img', { alt: 'g', src: '/img/silver.png' })
-	                                ),
-	                                comp.price.length > 0 && comp.price.slice(comp.price.length - 2) != "" && _react2.default.createElement(
-	                                    'span',
-	                                    null,
-	                                    ' ',
-	                                    comp.price.slice(comp.price.length - 2),
-	                                    _react2.default.createElement('img', { alt: 'g', src: '/img/copper.png' })
-	                                )
+	                                _this2.priceToTextWithCoins(comp.price)
 	                            )
 	                        );
 	                    })
@@ -24514,27 +24676,7 @@
 	                            { className: 'pull-right' },
 	                            _react2.default.createElement('img', { src: '/img/equal.png', width: '20px' }),
 	                            ' \xA0',
-	                            this.state.totalPrice.length > 4 && this.state.totalPrice.slice(0, this.state.totalPrice.length - 4) != "" && _react2.default.createElement(
-	                                'span',
-	                                null,
-	                                ' ',
-	                                this.state.totalPrice.slice(0, this.state.totalPrice.length - 4),
-	                                _react2.default.createElement('img', { alt: 'g', src: '/img/gold.png' })
-	                            ),
-	                            this.state.totalPrice.length > 2 && this.state.totalPrice.slice(this.state.totalPrice.length - 4, this.state.totalPrice.length - 2) != "" && _react2.default.createElement(
-	                                'span',
-	                                null,
-	                                ' ',
-	                                this.state.totalPrice.slice(this.state.totalPrice.length - 4, this.state.totalPrice.length - 2),
-	                                _react2.default.createElement('img', { alt: 'g', src: '/img/silver.png' })
-	                            ),
-	                            this.state.totalPrice.length > 0 && this.state.totalPrice.slice(this.state.totalPrice.length - 2) != "" && _react2.default.createElement(
-	                                'span',
-	                                null,
-	                                ' ',
-	                                this.state.totalPrice.slice(this.state.totalPrice.length - 2),
-	                                _react2.default.createElement('img', { alt: 'g', src: '/img/copper.png' })
-	                            )
+	                            this.priceToTextWithCoins(this.state.totalPrice)
 	                        )
 	                    )
 	                ),
@@ -24577,6 +24719,27 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var professions = ["Alchemy", "Blacksmithing", "Cooking", "Enchanting", "Engineering", "First Aid", "Inscription", "Jewelcrafting", "Leatherworking", "Tailoring"];
+
+	function formValid(callback) {
+	    var hasError = true;
+	    var errMsg = "";
+	    $("#addItemForm :input[required]:visible").each(function () {
+	        if ($(this).val() == "") {
+	            $(this).focus();
+	            hasError = false;
+	            errMsg = "Missing Item Infos";
+	            return false;
+	        } else if (isNaN($(this).val())) {
+	            $(this).focus();
+	            hasError = false;
+	            errMsg = "Item Info Must Be A Number";
+	            return false;
+	        }
+	    });
+	    callback({ isValid: hasError, content: errMsg });
+	}
+
 	var _default = function (_React$Component) {
 	    _inherits(_default, _React$Component);
 
@@ -24586,17 +24749,25 @@
 	        var _this = _possibleConstructorReturn(this, (_default.__proto__ || Object.getPrototypeOf(_default)).call(this, props));
 
 	        _this.state = {
-	            mainComp: "",
-	            comps: [{ comp: "" }, { comp: "" }, { comp: "" }]
+	            mainItem: "",
+	            mainQt: 1,
+	            comps: [{ comp: "", quantity: 1 }, { comp: "", quantity: 1 }, { comp: "", quantity: 1 }],
+	            profs: "Professions",
+	            isLoading: false,
+	            loadingCls: "fa fa-circle-o-notch fa-spin",
+	            hasError: false,
+	            errorMsg: ""
 	        };
+
+	        _this.clearItem = _this.clearItem.bind(_this);
+	        _this.saveItem = _this.saveItem.bind(_this);
 	        return _this;
 	    }
 
 	    _createClass(_default, [{
 	        key: 'addComp',
 	        value: function addComp() {
-	            var newAry = (0, _reactAddonsUpdate2.default)(this.state.comps, { $push: [{ comp: "" }] });
-	            console.log(newAry);
+	            var newAry = (0, _reactAddonsUpdate2.default)(this.state.comps, { $push: [{ comp: "", quantity: 1 }] });
 	            this.setState({ comps: newAry });
 	        }
 	    }, {
@@ -24609,39 +24780,188 @@
 	    }, {
 	        key: 'mainItemOnChange',
 	        value: function mainItemOnChange(e) {
-	            this.setState({ mainComp: e.target.value });
+	            this.setState({
+	                mainItem: e.target.value,
+	                hasError: false,
+	                errorMsg: ""
+	            });
+	        }
+	    }, {
+	        key: 'mainItemQtOnchange',
+	        value: function mainItemQtOnchange(e) {
+	            this.setState({ mainQt: e.target.value });
 	        }
 	    }, {
 	        key: 'subItemOnChange',
-	        value: function subItemOnChange(e) {}
+	        value: function subItemOnChange(e, index) {
+	            var newAry = this.state.comps.slice();
+	            var newObj = (0, _reactAddonsUpdate2.default)(this.state.comps[index], { $set: { comp: e.target.value, quantity: this.state.comps[index].quantity } });
+	            newAry[index] = newObj;
+	            this.setState({
+	                comps: newAry,
+	                hasError: false,
+	                errorMsg: ""
+	            });
+	        }
+	    }, {
+	        key: 'subItemQtOnChange',
+	        value: function subItemQtOnChange(e, index) {
+	            var newAry = this.state.comps.slice();
+	            var newObj = (0, _reactAddonsUpdate2.default)(this.state.comps[index], { $set: { comp: this.state.comps[index].comp, quantity: Number(e.target.value) } });
+	            newAry[index] = newObj;
+	            this.setState({ comps: newAry });
+	        }
+	    }, {
+	        key: 'clearItem',
+	        value: function clearItem() {
+	            this.setState({
+	                hasError: false,
+	                errorMsg: "",
+	                mainItem: "",
+	                mainQt: 1,
+	                comps: [{ comp: "", quantity: 1 }, { comp: "", quantity: 1 }, { comp: "", quantity: 1 }],
+	                profs: "Professions"
+	            });
+	        }
+	    }, {
+	        key: 'selectType',
+	        value: function selectType(prof) {
+	            this.setState({
+	                profs: prof,
+	                hasError: false,
+	                errorMsg: ""
+	            });
+	        }
+	    }, {
+	        key: 'saveItem',
+	        value: function saveItem() {
+	            var _this2 = this;
+
+	            if (this.state.profs == "Professions") {
+	                this.setState({
+	                    hasError: true,
+	                    errorMsg: "Select A Profession"
+	                });
+	            } else {
+	                formValid(function (validation) {
+	                    //check all inputs are filled
+	                    if (validation.isValid) {
+	                        _this2.setState({
+	                            isLoading: true,
+	                            hasError: false,
+	                            errorMsg: ""
+	                        });
+	                        var itemPkg = { main: _this2.state.mainItem, quantity: _this2.state.mainQt, comps: _this2.state.comps };
+	                        $.ajax({
+	                            url: '/api/professions/' + _this2.state.profs + '/' + _this2.state.mainItem + '/add',
+	                            type: 'POST',
+	                            contentType: "application/json",
+	                            data: JSON.stringify(itemPkg),
+	                            success: function success(result) {
+	                                if (result.status == "ok") {
+	                                    _this2.setState({
+	                                        loadingCls: "fa fa-check"
+	                                    });
+	                                } else {
+	                                    _this2.setState({
+	                                        hasError: true,
+	                                        loadingCls: "fa fa-ban",
+	                                        errorMsg: 'Error Happened with Item: ' + result.item
+	                                    });
+	                                }
+	                                setTimeout(function () {
+	                                    _this2.setState({
+	                                        loadingCls: "fa fa-circle-o-notch fa-spin",
+	                                        isLoading: false
+	                                    });
+	                                }, 3000);
+	                            }
+	                        });
+	                    } else {
+	                        _this2.setState({
+	                            hasError: true,
+	                            errorMsg: validation.content
+	                        });
+	                    }
+	                });
+	            }
+	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            return _react2.default.createElement(
 	                'div',
-	                null,
+	                { id: 'addItemForm' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'row' },
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'col-md-7' },
+	                        { className: 'col-md-5' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'dropdown' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-primary dropdown-toggle', type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+	                                this.state.profs,
+	                                '\xA0',
+	                                _react2.default.createElement('span', { className: 'caret' })
+	                            ),
+	                            _react2.default.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                professions.map(function (prof) {
+	                                    var selectType = _this3.selectType.bind(_this3, prof);
+	                                    return _react2.default.createElement(
+	                                        'li',
+	                                        { key: prof },
+	                                        _react2.default.createElement(
+	                                            'a',
+	                                            { href: 'javascript:void(0)', onClick: selectType },
+	                                            '\xA0 ',
+	                                            prof
+	                                        )
+	                                    );
+	                                })
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-md-5' },
+	                        _react2.default.createElement('input', { className: 'form-control', placeholder: 'Main Item', onChange: function onChange(e) {
+	                                return _this3.mainItemOnChange(e);
+	                            }, required: true, value: this.state.mainItem })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-md-2' },
+	                        _react2.default.createElement('input', { className: 'form-control', placeholder: 'Qt', onChange: function onChange(e) {
+	                                return _this3.mainItemQtOnchange(e);
+	                            }, required: true, value: this.state.mainQt })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-md-5' },
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'input-group' },
-	                            _react2.default.createElement('input', { className: 'form-control', placeholder: 'Main Item', onChange: function onChange(e) {
-	                                    return _this2.mainItemOnChange(e);
-	                                }, required: true }),
 	                            _react2.default.createElement(
 	                                'div',
 	                                { className: 'input-group-btn' },
 	                                _react2.default.createElement('button', { className: 'btn btn-default glyphicon glyphicon-plus', onClick: function onClick() {
-	                                        return _this2.addComp();
+	                                        return _this3.addComp();
 	                                    } }),
 	                                _react2.default.createElement('button', { className: 'btn btn-default glyphicon glyphicon-minus', onClick: function onClick() {
-	                                        return _this2.removeComp();
+	                                        return _this3.removeComp();
 	                                    } })
 	                            )
 	                        )
@@ -24654,16 +24974,51 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'col-md-5' },
-	                            _react2.default.createElement(
-	                                'div',
-	                                { className: 'input-group' },
-	                                _react2.default.createElement('input', { className: 'form-control', placeholder: 'Item Comp', onChange: function onChange(e) {
-	                                        return _this2.subItemOnChange(e);
-	                                    }, required: true })
-	                            )
+	                            _react2.default.createElement('input', { className: 'form-control', placeholder: 'Item Comp', onChange: function onChange(e) {
+	                                    return _this3.subItemOnChange(e, index);
+	                                }, required: true, value: _this3.state.comps[index].comp })
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-md-2' },
+	                            _react2.default.createElement('input', { className: 'form-control', placeholder: 'Qt', value: comp.quantity, onChange: function onChange(e) {
+	                                    return _this3.subItemQtOnChange(e, index);
+	                                }, required: true })
 	                        )
 	                    );
-	                })
+	                }),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-md-2' },
+	                        this.state.isLoading && _react2.default.createElement('i', { className: this.state.loadingCls, style: { marginTop: 10, marginLeft: 5 } })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-md-offset-3 col-md-5' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'input-group-btn' },
+	                                _react2.default.createElement('button', { className: 'btn btn-default glyphicon glyphicon-floppy-disk', onClick: function onClick() {
+	                                        return _this3.saveItem();
+	                                    } }),
+	                                _react2.default.createElement('button', { className: 'btn btn-default glyphicon glyphicon-trash', onClick: this.clearItem })
+	                            )
+	                        ),
+	                        _react2.default.createElement('br', null)
+	                    )
+	                ),
+	                this.state.hasError && _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    this.state.errorMsg
+	                )
 	            );
 	        }
 	    }]);
@@ -24797,4 +25152,4 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }
-/******/ ]);
+]);

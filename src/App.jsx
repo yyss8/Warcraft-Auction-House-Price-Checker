@@ -63,6 +63,12 @@ export default class App extends React.Component {
                         { this.state.settingField && 
                             <div className='col-md-6'style={ {minWidth:330,minHeight:300,backgroundColor:"#D1D6F2"} }>
                                 <br />
+                                <ul className="nav nav-tabs" style={{borderBottomColor:"#2e6da4"}}>
+                                    <li role="presentation" className='active'><a href='javascript:void(0)' style={{borderColor:"#2e6da4",borderBottomColor:"transparent"}}>New</a></li>
+                                    <li><a href='javascript:void(0)'>Modify</a></li>
+                                    <li><a href='javascript:void(0)'>User</a></li>
+                                </ul>
+                                <br />
                                 <AddItem/>
                             </div>
                         }

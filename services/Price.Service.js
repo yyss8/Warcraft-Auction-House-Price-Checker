@@ -10,7 +10,6 @@ class PriceService{
                 if (typeof result === "object"){
                     resultData.comps.push(result);
                     resultData["price"] += result.num; //get total price for main item
-
                     if (resultData.comps.length == jsonComp.length){
                         callback(resultData); 
                     }
