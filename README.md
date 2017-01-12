@@ -10,10 +10,10 @@ Back-end: Nodejs
 Database: Mongodb
 
 #01/11/17 Updates:
-  1.New Search Method Added
+  1. New Search Method Added
   
-  2.Simple Control Panel Added For Creating Items
+  2. Simple Control Panel Added For Creating Items
 
   Item Name/Icon/Quantity/Auctionable Status Are Now Automatically Fetched From Blizzard Dev Api
   
-  3.Bugs Fixes
+  3. Bugs Fixes
