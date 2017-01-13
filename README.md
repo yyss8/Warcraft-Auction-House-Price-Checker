@@ -3,13 +3,23 @@
 Demo: http://wow.scitnet.com
 
 # Languages Involved
-Front-End: Javascript/Bootstrap/Jquery/React/Redux
+Front-End: Javascript/Bootstrap/Jquery/React/Redux/React-Router
 
 Back-end: Nodejs
 
 Database: Mongodb
 
-# 01/11/17 Updates:
+# 01-12-17 Updates:
+  1. React-Router added for control panel routing.
+  
+  2. Simple Control Panel Added For Modifing Items (Not Finished).
+  
+  3. Search page styles adjusted.
+  
+  4. Bugs Fixes
+
+
+# 01-11-17 Updates:
   1. New Search Method Added
   
   Search result from user typing only include up to 8 matched results.
