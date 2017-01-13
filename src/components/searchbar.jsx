@@ -2,8 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { selectItem,loadComps,loadPrice,updateTime} from "../actions/items.js"
 import update from "react-addons-update";
+import ProfList from './minorcomponents/professionselect.jsx';
 
-const professions = ["Alchemy","Blacksmithing","Cooking","Enchanting","Engineering","First Aid","Inscription","Jewelcrafting","Leatherworking","Tailoring"];
 const resultTxtStyle = {margin:"3px 0 0 0"};
 let typingTimer;
 
@@ -16,8 +16,7 @@ const searchStyle = {
     return {
         updateTime:store.updateTime
     }
-}
-)
+})
 export default class extends React.Component{
     constructor(props){
         super(props);
@@ -51,6 +50,7 @@ export default class extends React.Component{
             this.setState({schKyWrds:e.target.value});
             //wait 3 seconds until user finish typing.
             this.setState({
+                items:[],
                 currentItems:{
                     pageNum:1,
                     items:[{name:"Loading"}]
@@ -256,21 +256,9 @@ export default class extends React.Component{
                 </div>
                 <br />
                 <div className="input-group">
+
                     <div className='input-group-btn'>
-                        <div className="dropdown">
-                            <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {this.state.schType}&nbsp;
-                                <span className="caret"></span>    
-                            </button>
-                            <ul className="dropdown-menu">
-                            
-                                {professions.map(prof => {
-                                    
-                                    const selectType = this.selectType.bind(this,prof);
-                                    return (<li key={prof}><a href='javascript:void(0)' onClick={ selectType } >&nbsp; {prof}</a></li>)
-                                })}
-                            </ul>
-                        </div>
+                        <ProfList profs={ this.state.schType } selectType={ prof => this.selectType(prof) } />
                     </div>
                     
                     <input className='form-control' type='text' value={ this.state.schKyWrds } onChange={ e=> this.kyWrdChange(e) } placeholder='Enter Item Name'/>
@@ -278,6 +266,7 @@ export default class extends React.Component{
                         <button className="btn btn-default" type="button" onClick={ this.getAllItems }><i className="glyphicon glyphicon-search"></i></button>
                         {this.state.schKyWrds != "" && <button className="btn btn-default" type="button" onClick={ () => this.clearKyWrds() } ><i className="glyphicon glyphicon-remove"></i></button>}
                     </div>
+
                 </div>
                 
                 {this.state.hasError && <div className='alert alert-danger'>{this.state.errorMsg}</div>}
@@ -287,7 +276,7 @@ export default class extends React.Component{
                             //display no result
                             const selectItem = this.selectItem.bind(this,item);
                             return(<a key={item.item} className='list-group-item list-group-item-action' href='javascript:void(0)' onClick={ selectItem }>
-                                        <img src={ "http://media.blizzard.com/wow/icons/56/" + item.icon + ".jpg" } width='30' />
+                                        <img src={ `http://media.blizzard.com/wow/icons/56/${item.icon}.jpg` } width='30' />
                                         <span className='pull-right' style={resultTxtStyle}>{ item.name }</span>
                                     </a>
                                 )

@@ -17,7 +17,7 @@ routers.get('/',(req,res,next) =>{
 
 routers.get("/:prof/part/:kywrds",(req,res,next) =>{
     //return only first 8 matched results
-    let dbName = getDb(req.params.prof);
+    const dbName = getDb(req.params.prof);
     profServices.get_items_part(dbName,req.params.kywrds,result => {
         res.send(result);
         next();
@@ -26,7 +26,7 @@ routers.get("/:prof/part/:kywrds",(req,res,next) =>{
 
 routers.get("/:prof/all/:kywrds",(req,res,next) =>{
     //return all matched results
-    let dbName = getDb(req.params.prof);
+    const dbName = getDb(req.params.prof);
     profServices.get_items_all(dbName,req.params.kywrds,result => {
         res.send(result);
         next();
@@ -34,16 +34,27 @@ routers.get("/:prof/all/:kywrds",(req,res,next) =>{
 });
 
 routers.get("/:prof/:item/comps",(req,res,next) => {
-    let dbName = getDb(req.params.prof);
+    //return matched results up to 8
+    const dbName = getDb(req.params.prof);
     profServices.get_comps(dbName,req.params.item,result => {
         res.send(result);
         next();
     });
 });
 
+routers.get("/:prof/:item",(req,res,next) => {
+    //return single item info
+    const dbName = getDb(req.params.prof);
+    profServices.get_item_by_id(dbName,Number(req.params.item),result =>{
+        res.send(result);
+        next();
+    });
+});
+
 routers.post("/:prof/:item/add",(req,res,next) => {
+    //add item
     res.writeHead(200, {"Content-Type": "application/json"});
-    let dbName = getDb(req.params.prof);
+    const dbName = getDb(req.params.prof);
     updateServices.create_new_item(dbName,req.body,result => {
         res.write(JSON.stringify(result));
         res.end();

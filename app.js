@@ -14,7 +14,14 @@ app.use('/api/price',priceApi);
 
 app.get('/',(req,res,next) => {
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
-  next();
+});
+
+app.get('/cp',(req,res,next) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
+
+app.get('/cp/*',(req,res,next) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 
 var server = app.listen(8081, function () {

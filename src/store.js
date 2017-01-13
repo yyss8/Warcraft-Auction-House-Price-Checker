@@ -3,10 +3,10 @@ import { createStore,combineReducers } from "redux";
 const selectedItemReducer = (state={},action) => {
     switch (action.type){
         case "selectItem":
-            return {item: action.item,icon:action.icon,name:action.name};
+            return {item: action.item,icon:action.icon,name:action.name}
             break;
         default:
-            return state;
+            return state
     }
 }
 
@@ -17,7 +17,7 @@ const itemCompsReducer = (state={},action) => {
             break;
 
         default:
-            return state;        
+            return state   
     }
 }
 
@@ -27,7 +27,7 @@ const compPriceReducer = (state={},action) =>{
             return {comps:action.items}
             break;
         default:
-            return state;
+            return state
     }
 }
 
@@ -37,7 +37,7 @@ const updateTimeReducer = (state="None",action) =>{
             return action.newTime
             break;
         default:
-            return state;
+            return state
     }
 }
 

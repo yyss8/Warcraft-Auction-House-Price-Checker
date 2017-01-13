@@ -1,11 +1,23 @@
 import React from 'react';
 import Search from "./components/searchbar.jsx";
 import Price from "./components/priceview.jsx";
-import AddItem from "./components/additem.jsx";
 import update from "react-addons-update";
+import { Link,browserHistory } from "react-router";
+import { connect } from 'react-redux'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
+const linksStyle = {
+    borderColor:"#2e6da4",
+    borderBottomColor:"transparent",
+    backgroundColor:"#fff"
+}
 
-export default class App extends React.Component {
+@connect(store =>{
+    return {
+        curPg:store.curPg
+    }
+})
+export default class extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -21,21 +33,19 @@ export default class App extends React.Component {
             },
             settingField:false
         };
-
-        this.openSetting = this.openSetting.bind(this);
     }
 
-    openSetting(){
+    openSetting(path){
         if (this.state.schFieldCls == "panel col-md-12"){
             this.setState({
                 mainFieldCls:"col-md-offset-3 col-md-6",
                 schFieldCls:"panel col-md-6"
             });
-
             setTimeout(()=>{
                 this.setState({
                     settingField:!this.state.settingField
                 })
+                browserHistory.push(path);
             },500);
             
         }else{
@@ -43,10 +53,24 @@ export default class App extends React.Component {
                 mainFieldCls:"col-md-offset-4 col-md-4",
                 schFieldCls:"panel col-md-12",
                 settingField:!this.state.settingField
-            });        
+            });
+            browserHistory.push('/');
         }
 
     }
+
+    componentDidMount(){
+        //redirect to control panel based on url
+        
+        if (this.props.location.pathname != "/"){
+            this.setState({
+                mainFieldCls:"col-md-offset-3 col-md-6",
+                schFieldCls:"panel col-md-6",
+                settingField:!this.state.settingField
+            });
+        }
+    }
+
 
     render() {
         return (
@@ -54,22 +78,33 @@ export default class App extends React.Component {
             <br />
                 <div className='row'>
                     <div className={this.state.mainFieldCls} style={ this.state.priceFormStyle }>
-                        <div className={this.state.schFieldCls} style={ {minWidth:330,minHeight:300,backgroundColor:"#D1D6F2"} }>
+                        <div className={this.state.schFieldCls} style={ {minWidth:330,minHeight:600,backgroundColor:"#D1D6F2"} }>
+                            {/* pricing field */}
                             <br />
                             <Search />
                             <Price/>
-                            <button className='pull-right btn btn-default fa fa-gear' onClick={ this.openSetting }></button>
+                            <div className='row'>
+                                <div className='col-md-offset-10 col-md-2'>
+                                    <button className='pull-right btn btn-default fa fa-gear' onClick={ ()=>this.openSetting('/cp/add') }></button>
+                                </div>
+                            </div>
+                            <br/>
+                            
                         </div>
-                        { this.state.settingField && 
-                            <div className='col-md-6'style={ {minWidth:330,minHeight:300,backgroundColor:"#D1D6F2"} }>
+
+                        { //control panel field
+                            this.state.settingField && 
+                            <div className='col-md-6'style={ {minWidth:330,minHeight:250,backgroundColor:"#D1D6F2"} }>
+                                <ReactCSSTransitionGroup transitionName="cp" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                                 <br />
                                 <ul className="nav nav-tabs" style={{borderBottomColor:"#2e6da4"}}>
-                                    <li role="presentation" className='active'><a href='javascript:void(0)' style={{borderColor:"#2e6da4",borderBottomColor:"transparent"}}>New</a></li>
-                                    <li><a href='javascript:void(0)'>Modify</a></li>
-                                    <li><a href='javascript:void(0)'>User</a></li>
+                                    <li><Link to='/cp/add' activeClassName="active" activeStyle={ linksStyle }>New</Link></li>
+                                    <li><Link to='/cp/modify' activeClassName="active" activeStyle={ linksStyle }>Modify</Link></li>
+                                    <li><Link to='/cp/user' activeClassName="active" activeStyle={ linksStyle }>User</Link></li>
                                 </ul>
                                 <br />
-                                <AddItem/>
+                                {this.props.children}
+                                </ReactCSSTransitionGroup>
                             </div>
                         }
                     </div>

@@ -2,7 +2,7 @@ const mongodb = require("mongodb")
 const assert = require("assert")
 const request = require("superagent");
 
-const url = "@link to your mongodb"
+const url = "mongodb://scitnet.com:5333/vue"
 
 class ProfServices{
     get_items_part(dbName,kyWrds,callback){
@@ -43,9 +43,23 @@ class ProfServices{
             queryObj2[lngName] = 1;   // 选择留下语言field
             collection.find(srchObj,{fields:queryObj2}).toArray((err,doc)=>{ //return all matched results
                 if (err){
-                    callback({status:"err",content:"Error Happened"})
+                    callback({status:"err",content:"Error Happened"});
                 }else{
                     callback({status:"ok",content:"Search Successful",result:doc});
+                }
+            });
+        });
+    }
+
+    get_item_by_id(dbName,id,callback){
+        mongodb.connect(url, (err, db) => {
+            assert.equal(null, err);
+            const collection = db.collection(dbName);
+            collection.findOne({item:id}).then(doc =>{
+                if (doc === null){
+                    callback({status:"err",content:"Item Not Found"});
+                }else{
+                    callback({status:"ok",content:"Item Found",result:doc});
                 }
             });
         });

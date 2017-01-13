@@ -1,0 +1,8 @@
+.cp-enter {
+  opacity: 0.01;
+}
+
+.cp-enter.cp-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}

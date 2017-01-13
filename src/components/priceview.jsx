@@ -82,11 +82,11 @@ export default class extends React.Component{
     render(){
         return(
             <div style={ {marginTop:10} }>
-                <div className="panel panel-defaul" style={ {maxHeight:400,minHeight:150 } }>
+                <div className="panel panel-defaul" style={ {maxHeight:600,minHeight:350 } }>
                     {this.state.selectedItem.item != undefined &&
                         <div> 
                             <span className='list-group-item list-group-item-action'>
-                                <img src={ "http://media.blizzard.com/wow/icons/56/" + this.props.selectedItem.icon + ".jpg" } height='40px' width='40px' />
+                                <img src={ `http://media.blizzard.com/wow/icons/56/${ this.props.selectedItem.icon }.jpg` } height='40px' width='40px' />
                                 <h4 className='pull-right'> { this.props.selectedItem.name } </h4>
                             </span>
                             <div className='row'>
@@ -99,8 +99,8 @@ export default class extends React.Component{
                             this.state.itemComps.map(comp=>{
                                 return(
                                     <span key={comp.compItem} className='list-group-item list-group-item-action'>
-                                        <img src={ "http://media.blizzard.com/wow/icons/56/" + comp.icon + ".jpg" } height='40px' width='40px' />
-                                        <span className='h4'> { comp.enName } </span>
+                                        <img src={ `http://media.blizzard.com/wow/icons/56/${ comp.icon }.jpg` } height='40px' width='40px' />
+                                        <span className='h5'> { comp.enName } </span>
                                         <span>&nbsp;<i className='fa fa-times'></i> &nbsp; <b>{ comp.quantity }</b> </span>
                                         <span className={ comp.resultStyle } style={ {marginTop:7} } > 
                                         { this.priceToTextWithCoins(comp.price) }

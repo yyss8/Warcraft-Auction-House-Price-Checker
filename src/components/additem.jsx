@@ -1,7 +1,6 @@
 import React from 'react'
 import update from 'react-addons-update'
-
-const professions = ["Alchemy","Blacksmithing","Cooking","Enchanting","Engineering","First Aid","Inscription","Jewelcrafting","Leatherworking","Tailoring"];
+import ProfList from './minorcomponents/professionselect.jsx';
 
 function formValid(callback){
     let hasError = true;
@@ -46,7 +45,7 @@ export default class extends React.Component{
     }
 
     removeComp(){
-        const newAry = this.state.comps.slice();
+        let newAry = [...this.state.comps];
         newAry.pop();
         this.setState({comps:newAry});        
     }
@@ -64,7 +63,7 @@ export default class extends React.Component{
     }
 
     subItemOnChange(e,index){
-        let newAry = this.state.comps.slice();
+        let newAry = [...this.state.comps];
         const newObj = update(this.state.comps[index],{$set:{comp:e.target.value,quantity:this.state.comps[index].quantity}});
         newAry[index] = newObj;
         this.setState({
@@ -75,7 +74,7 @@ export default class extends React.Component{
     }
 
     subItemQtOnChange(e,index){
-        let newAry = this.state.comps.slice();
+        let newAry = [...this.state.comps];
         const newObj = update(this.state.comps[index],{$set:{comp:this.state.comps[index].comp,quantity:Number(e.target.value)}});
         newAry[index] = newObj;
         this.setState({comps:newAry});
@@ -157,18 +156,7 @@ export default class extends React.Component{
             <div id='addItemForm'>
                 <div className='row'>
                     <div className='col-md-5'>
-                        <div className="dropdown">
-                            <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {this.state.profs}&nbsp;
-                                <span className="caret"></span>    
-                            </button>
-                            <ul className="dropdown-menu">
-                                {professions.map(prof => {
-                                    const selectType = this.selectType.bind(this,prof);
-                                    return (<li key={prof}><a href='javascript:void(0)' onClick={ selectType } >&nbsp; {prof}</a></li>)
-                                })}
-                            </ul>
-                        </div>
+                        <ProfList profs={ this.state.profs } selectType={ prof => this.selectType(prof) } />
                     </div>
                 </div>
 
