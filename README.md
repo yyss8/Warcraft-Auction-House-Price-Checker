@@ -9,6 +9,9 @@ Back-end: Nodejs
 
 Database: Mongodb
 
+# 01-14-17 Updates:
+  1. Control panel for modifing items finished
+
 # 01-12-17 Updates:
   1. React-Router added for control panel routing.
   
