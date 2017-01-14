@@ -140,7 +140,29 @@ class UpdateItemServices{
             callback({"status":"err","content":"Main Item Icon Not Found",item:"main"})
         }); 
     }
+
+    update_item(dbName,newItem,callback){
+        const id = mongodb.ObjectID(newItem._id);
+        mongodb.connect(url, (err, db) => {
+            assert.equal(null, err);
+            let collection = db.collection(dbName);
+            collection.update({_id:id},{"$set":{
+                item:newItem.item,
+                quantity:newItem.quantity,
+                cnName:newItem.cnName,
+                enName:newItem.enName,
+                icon:newItem.icon,
+                comp:newItem.comp
+            }}).then((doc)=>{
+                callback({"status":"ok","content":`Item ${newItem.item} Has Been Modified`}); 
+            },(err)=>{
+                callback({status:"err",content:"Error Happened"});
+            });
+            db.close();
+        });        
+    }
 }
+mongodb.ObjectID
 
 function getItemInfo(id,index,callback,error){
 

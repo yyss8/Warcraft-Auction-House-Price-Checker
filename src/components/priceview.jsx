@@ -86,8 +86,8 @@ export default class extends React.Component{
                     {this.state.selectedItem.item != undefined &&
                         <div> 
                             <span className='list-group-item list-group-item-action'>
-                                <img src={ `http://media.blizzard.com/wow/icons/56/${ this.props.selectedItem.icon }.jpg` } height='40px' width='40px' />
-                                <h4 className='pull-right'> { this.props.selectedItem.name } </h4>
+                                <img src={ `http://media.blizzard.com/wow/icons/56/${ this.props.selectedItem.icon }.jpg` } width="30" />
+                                <span className='pull-right h5'> { this.props.selectedItem.name } </span>
                             </span>
                             <div className='row'>
                                 <span className='glyphicon glyphicon-arrow-down col-md-offset-4 col-md-4' style={ arrowStyle } ></span>
@@ -99,7 +99,7 @@ export default class extends React.Component{
                             this.state.itemComps.map(comp=>{
                                 return(
                                     <span key={comp.compItem} className='list-group-item list-group-item-action'>
-                                        <img src={ `http://media.blizzard.com/wow/icons/56/${ comp.icon }.jpg` } height='40px' width='40px' />
+                                        <img src={ `http://media.blizzard.com/wow/icons/56/${ comp.icon }.jpg` } width='30' />
                                         <span className='h5'> { comp.enName } </span>
                                         <span>&nbsp;<i className='fa fa-times'></i> &nbsp; <b>{ comp.quantity }</b> </span>
                                         <span className={ comp.resultStyle } style={ {marginTop:7} } > 

@@ -273,11 +273,11 @@ export default class extends React.Component{
                 <ul className='nav nav-second-level' style={searchStyle}>
                     {this.state.currentItems.items.map(item => {
                         if (item.name != "No Result" && item.name != "Loading"){
-                            //display no result
+                            //display results from returned item list
                             const selectItem = this.selectItem.bind(this,item);
                             return(<a key={item.item} className='list-group-item list-group-item-action' href='javascript:void(0)' onClick={ selectItem }>
-                                        <img src={ `http://media.blizzard.com/wow/icons/56/${item.icon}.jpg` } width='30' />
-                                        <span className='pull-right' style={resultTxtStyle}>{ item.name }</span>
+                                        <img src={ `http://media.blizzard.com/wow/icons/56/${item.icon}.jpg` } width='20' />
+                                        <span className='pull-right h5' style={resultTxtStyle}>{ item.name }</span>
                                     </a>
                                 )
                             
@@ -289,7 +289,7 @@ export default class extends React.Component{
                                     </a>
                                 )
                         }   
-                        //display results from returned item list
+                        //display no result
                         return(<a key={item.name} className='list-group-item list-group-item-action' href='javascript:void(0)'>
                                     <span className="glyphicon glyphicon-question-sign" />
                                     <span className='pull-right'>{ item.name }</span>
@@ -300,8 +300,8 @@ export default class extends React.Component{
 
                     {this.state.items.length > 8 &&
                         //display only 8 results for each page
-                        <div className='list-group-item list-group-item-action' style={{backgroundColor:"#fff"}}>
-                            <ul className="pagination">
+                        <div className='list-group-item list-group-item-action'>
+                            <ul className="pagination" style={ {margin:0} }>
                                 {  this.state.currentItems.pageNum != 1 && 
                                     <li>
                                         <a href="javascript:void(0)" aria-label="Previous" onClick={ () => this.switchResultPg(this.state.currentItems.pageNum - 1) } >

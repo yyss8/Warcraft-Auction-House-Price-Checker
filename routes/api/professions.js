@@ -62,4 +62,15 @@ routers.post("/:prof/:item/add",(req,res,next) => {
     });
 });
 
+routers.put('/:prof/:item/update',(req,res,next) => {
+    //update item
+    res.writeHead(200, {"Content-Type": "application/json"});
+    const dbName = getDb(req.params.prof);
+    updateServices.update_item(dbName,req.body,result => {
+        res.write(JSON.stringify(result));
+        res.end();
+        next();
+    });
+});
+
 module.exports = routers;
