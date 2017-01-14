@@ -126,7 +126,8 @@ export default class extends React.Component{
                     quantity:r.result.quantity === undefined || r.result.quantity === null ? 1:r.result.quantity, //prevent fetching undefined or null quantity
                     comps:r.result.comp ,
                     enName:r.result.enName,
-                    cnName:r.result.cnName
+                    cnName:r.result.cnName,
+                    showResult:false
                 });
             }else{
                 this.setState({
