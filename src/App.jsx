@@ -22,7 +22,7 @@ export default class extends React.Component {
         super(props);
         this.state = {
             schFieldCls:"panel col-md-12",
-            mainFieldCls:"col-md-offset-4 col-md-4",
+            mainFieldCls:"col-md-offset-3 col-md-6",
             priceFormStyle:{
                 backgroundColor:"#D1D6F2",
                 minHeight:300,
@@ -38,7 +38,7 @@ export default class extends React.Component {
     openSetting(path){
         if (this.state.schFieldCls == "panel col-md-12"){
             this.setState({
-                mainFieldCls:"col-md-offset-3 col-md-6",
+                mainFieldCls:"col-md-offset-2 col-md-8",
                 schFieldCls:"panel col-md-6"
             });
             setTimeout(()=>{
@@ -50,7 +50,7 @@ export default class extends React.Component {
             
         }else{
             this.setState({
-                mainFieldCls:"col-md-offset-4 col-md-4",
+                mainFieldCls:"col-md-offset-3 col-md-6",
                 schFieldCls:"panel col-md-12",
                 settingField:!this.state.settingField
             });
@@ -64,7 +64,7 @@ export default class extends React.Component {
         
         if (this.props.location.pathname != "/"){
             this.setState({
-                mainFieldCls:"col-md-offset-3 col-md-6",
+                mainFieldCls:"col-md-offset-2 col-md-8",
                 schFieldCls:"panel col-md-6",
                 settingField:!this.state.settingField
             });
@@ -78,7 +78,7 @@ export default class extends React.Component {
             <br />
                 <div className='row'>
                     <div className={this.state.mainFieldCls} style={ this.state.priceFormStyle }>
-                        <div className={this.state.schFieldCls} style={ {minWidth:330,minHeight:600,backgroundColor:"#D1D6F2"} }>
+                        <div className={this.state.schFieldCls} style={ {minWidth:330,minHeight:500,backgroundColor:"#D1D6F2"} }>
                             {/* pricing field */}
                             <br />
                             <Search />

@@ -24,7 +24,7 @@ const itemCompsReducer = (state={},action) => {
 const compPriceReducer = (state={},action) =>{
     switch (action.type){
         case "loadPrices":
-            return {comps:action.items}
+            return {item:action.items.item,price:action.items.price,comps:action.items.comps}
             break;
         default:
             return state

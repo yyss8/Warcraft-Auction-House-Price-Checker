@@ -102,7 +102,7 @@ export default class extends React.Component{
             url:`/api/price/${item.main}/all/${JSON.stringify(item.comps)}`,
             type:'GET',
             success:(r) =>{
-                this.props.dispatch(loadPrice(r.comps));
+                this.props.dispatch(loadPrice({item:Number(r.item),price:r.price,comps:r.comps}));
             }
         });        
     }
