@@ -11,6 +11,10 @@ Database: Mongodb
 
 # 01-14-17 Updates:
   1. Control panel for modifing items finished
+  
+  2. AH price added for main item to compare with comp price
+  
+  3. Allows users to remove/add comp price from/to total comp price
 
 # 01-12-17 Updates:
   1. React-Router added for control panel routing.
