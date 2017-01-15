@@ -15,6 +15,8 @@ Database: Mongodb
   2. AH price added for main item to compare with comp price
   
   3. Allows users to remove/add comp price from/to total comp price
+  
+  4. layout adjusted
 
 # 01-12-17 Updates:
   1. React-Router added for control panel routing.
