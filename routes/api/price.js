@@ -7,6 +7,7 @@ const setLib = require("../../data/calprice").setLib;
 let libUpdateTime = "None";
 
 getData.periodic_download_data(20,function(err,t,d){
+    //download data for each 20 mins
     if (err ==="none"){
         libUpdateTime = t;
         setLib(d);
@@ -15,7 +16,7 @@ getData.periodic_download_data(20,function(err,t,d){
 });
 
 routers.get('/',(req,res,next) =>{
-    res.send("fuck you");
+    res.send("price main");
     next();
 });
 

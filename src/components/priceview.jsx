@@ -109,13 +109,14 @@ export default class extends React.Component{
             <div style={ {marginTop:10} }>
                 <div className="panel panel-defaul" style={ {maxHeight:600,minHeight:250 } }>
                     {this.state.selectedItem.item != undefined &&
+                        /* main item row */
                         <div> 
                             <span className='list-group-item list-group-item-action'>
                                 <img src={ `http://media.blizzard.com/wow/icons/56/${ this.props.selectedItem.icon }.jpg` } width="30" />
                                 <span className='pull-right h5'> { this.props.selectedItem.name } </span>
                             </span>
                             <div className='row'>
-                                <span className='glyphicon glyphicon-arrow-down col-md-offset-4 col-md-4' style={ arrowStyle } ></span>
+                                <span className='glyphicon glyphicon-arrow-down col-md-12' style={ arrowStyle } ></span>
                             </div>
                         </div>
                     }
@@ -123,6 +124,7 @@ export default class extends React.Component{
                     { this.state.itemComps != undefined &&
                             this.state.itemComps.map((comp,index)=>{
                                 return(
+                                    /* comp items infos */
                                     <li key={comp.compItem} className='list-group-item list-group-item-action'>
                                         <div className='row'>
                                             <span className='col-xs-1'>
@@ -149,6 +151,7 @@ export default class extends React.Component{
                 </div>
                     <hr />
                     <div className='row'>
+                        {/* AH price row */}
                         <div className='col-md-2'>
                             { this.state.itemComps.length != 0 && 
                             <div className="input-group-btn">
@@ -165,7 +168,7 @@ export default class extends React.Component{
                     </div>
 
                     <div className='row'>
-
+                        {/* comp price row */}
                         <div className='col-md-offset-7 col-md-5 text-right'>
                             <strong>Comp Price</strong>&nbsp;&nbsp;
                             { this.priceToTextWithCoins (this.state.totalPrice) }

@@ -1,4 +1,5 @@
 export const updateTime = (time) =>{
+    //action for data update time
     return {
         type:"updateTime",
         newTime:time
@@ -6,6 +7,7 @@ export const updateTime = (time) =>{
 }
 
 export const selectItem = (item) => {
+    //action for selecting item from result list
     return {
         type:'selectItem',
         item:item.item,
@@ -15,6 +17,7 @@ export const selectItem = (item) => {
 }
 
 export const loadComps = (comps) =>{
+    //action for loading comp items
     return {
         type:"loadComps",
         comps:comps
@@ -22,6 +25,7 @@ export const loadComps = (comps) =>{
 }
 
 export const loadPrice = (item) =>{
+    //action for loading price
     return {
         type:"loadPrices",
         items:item

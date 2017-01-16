@@ -558,6 +558,7 @@ export default class extends React.Component{
 
                         {this.state.mainItem != "" && 
                             <div className='row'>
+                               {/* result & save/remove buttons */}
                                 <div className='col-md-2'>
                                 { this.state.isLoading && 
                                     <i className={ this.state.loadingCls } style={{marginTop:10,marginLeft:5}}></i>

@@ -11,7 +11,7 @@ const getDb = prof =>{
 }
 
 routers.get('/',(req,res,next) =>{
-    res.send("fuck you");
+    res.send("profession main");
     next();
 });
 

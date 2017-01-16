@@ -139,6 +139,7 @@ export default class extends React.Component{
                             let itemAry = []
                             r.result.forEach((result) => {
                                 let item = {icon:result.icon,item:result.item}
+                                //get item name based on search keyword language
                                 if (result.enName == undefined){
                                     item["name"] = result.cnName;
                                 }else{
@@ -146,7 +147,7 @@ export default class extends React.Component{
                                 }
                                 itemAry.push(item);
                             });
-                            const curItems = this.getPageItems(itemAry,1);
+                            const curItems = this.getPageItems(itemAry,1); //get current item for first page
                             this.setState({
                                 items:itemAry,
                                 currentItems:curItems
@@ -216,7 +217,7 @@ export default class extends React.Component{
 
         const pgItemNum = 8; //8 item for each result page
 
-        const curItems = items.slice(pg * pgItemNum - pgItemNum,pg * pgItemNum);
+        const curItems = items.slice(pg * pgItemNum - pgItemNum,pg * pgItemNum); //get 8 items based on pg number
 
         return update(this.state.currentItems,{$set:{pageNum:pg,items:curItems}});
     }

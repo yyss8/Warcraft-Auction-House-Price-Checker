@@ -2,7 +2,7 @@ const mongodb = require("mongodb")
 const assert = require("assert")
 const request = require("superagent");
 
-const url = "mongodb://scitnet.com:5333/vue"
+const url = require("../db.config").dataDB;
 
 class ProfServices{
     get_items_part(dbName,kyWrds,callback){
@@ -66,6 +66,7 @@ class ProfServices{
     }
 
     get_comps(dbName,item,callback){
+        //get comp items id
         mongodb.connect(url, (err, db) => {
             assert.equal(null, err);
             const collection = db.collection(dbName);
@@ -82,7 +83,7 @@ class ProfServices{
 }
 
 function chkLanguage(s){  
-    //检查是否中文
+    //check if search keywords are in Chinese
     let patrn=/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi;  
     if(!patrn.exec(s)){  
         return false;  
@@ -102,7 +103,7 @@ class UpdateItemServices{
                 if (itemPkg.comps.length != 0){
                     //get item info for item comps
                     for (var i = 0;i< itemPkg.comps.length;i++){
-                        var finishCounter = 0;
+                        var finishCounter = 0; //update counter
                         var compObj = {"compItem":Number(itemPkg.comps[i].comp),"icon":"","isAuctionable":false,"enName":"",quantity:Number(itemPkg.comps[i].quantity)};
                         itemToUpdate.comp.push(compObj);
                         getItemInfo(itemPkg.comps[i].comp,i,(returnData) => {
@@ -142,6 +143,7 @@ class UpdateItemServices{
     }
 
     update_item(dbName,newItem,callback){
+        //update item
         const id = mongodb.ObjectID(newItem._id);
         mongodb.connect(url, (err, db) => {
             assert.equal(null, err);
@@ -162,10 +164,9 @@ class UpdateItemServices{
         });        
     }
 }
-mongodb.ObjectID
 
 function getItemInfo(id,index,callback,error){
-
+    //get item name/icon/auctionable from bliz Api
     returnData = {};
     let url = `https://us.api.battle.net/wow/item/${id}?locale=en_US&apikey=kjp5c67kqfvk4uukkzaafa8cw8bvfzw3`;
     request

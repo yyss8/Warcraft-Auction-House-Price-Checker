@@ -51,33 +51,47 @@ export default class extends React.Component{
     }
 
     mainItemOnChange(e){
-        this.setState({
-            mainItem:e.target.value,
-            hasError:false,
-            errorMsg:"",
-        });
+        //main item id on change
+        if (!isNaN(e.target.value)){
+            this.setState({
+                mainItem:e.target.value,
+                hasError:false,
+                errorMsg:"",
+            });
+        }
     }
 
     mainItemQtOnchange(e){
-        this.setState({mainQt:e.target.value});
+        //main item quantity on change
+        if (!isNaN(e.target.value)){
+            this.setState({mainQt:e.target.value});
+        }
     }
 
     subItemOnChange(e,index){
-        let newAry = [...this.state.comps];
-        const newObj = update(this.state.comps[index],{$set:{comp:e.target.value,quantity:this.state.comps[index].quantity}});
-        newAry[index] = newObj;
-        this.setState({
-            comps:newAry,
-            hasError:false,
-            errorMsg:""
-        });
+        //comp item id on change
+        if (!isNaN(e.target.value)){
+            let newAry = [...this.state.comps];
+            const newObj = update(this.state.comps[index],{$set:{comp:e.target.value,quantity:this.state.comps[index].quantity}});
+            newAry[index] = newObj;
+            this.setState({
+                comps:newAry,
+                hasError:false,
+                errorMsg:""
+            });
+        }
+
     }
 
     subItemQtOnChange(e,index){
-        let newAry = [...this.state.comps];
-        const newObj = update(this.state.comps[index],{$set:{comp:this.state.comps[index].comp,quantity:Number(e.target.value)}});
-        newAry[index] = newObj;
-        this.setState({comps:newAry});
+        //comp item quantity on change
+        if (!isNaN(e.target.value)){
+            let newAry = [...this.state.comps];
+            const newObj = update(this.state.comps[index],{$set:{comp:this.state.comps[index].comp,quantity:Number(e.target.value)}});
+            newAry[index] = newObj;
+            this.setState({comps:newAry});
+        }
+
     }
 
     clearItem(){
@@ -92,6 +106,7 @@ export default class extends React.Component{
     }
 
     selectType(prof){
+        //select profession
         this.setState({
             profs:prof,
             hasError:false,
@@ -162,6 +177,7 @@ export default class extends React.Component{
 
                 <br />
                 <div className='row'>
+                    {/* main item field */}
                     <div className='col-md-5'>
                         <input className='form-control' placeholder='Main Item' onChange={ e=> this.mainItemOnChange(e) } required value={ this.state.mainItem }/>
                     </div>
@@ -182,6 +198,7 @@ export default class extends React.Component{
                 {
                     this.state.comps.map((comp,index)=>{
                         return(
+                            /* comp items field */
                             <div key={index} className='row' style={{marginTop:5}}>
                                 <div  className='col-md-5'> 
                                     <input className='form-control' placeholder='Item Comp' onChange={ (e)=> this.subItemOnChange(e,index) } required value={ this.state.comps[index].comp }/>
@@ -195,6 +212,7 @@ export default class extends React.Component{
                 }
                 <br />
                 <div className='row'>
+                    {/* result & save/remove buttons */}
                     <div className='col-md-2'>
                     { this.state.isLoading && 
                         <i className={ this.state.loadingCls } style={{marginTop:10,marginLeft:5}}></i>

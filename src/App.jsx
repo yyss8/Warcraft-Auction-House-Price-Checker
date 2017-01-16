@@ -4,6 +4,7 @@ import Price from "./components/priceview.jsx";
 import update from "react-addons-update";
 import { Link,browserHistory } from "react-router";
 import { connect } from 'react-redux'
+import { login } from "./actions/login";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 const linksStyle = {
@@ -14,7 +15,7 @@ const linksStyle = {
 
 @connect(store =>{
     return {
-        curPg:store.curPg
+        loginUser:store.login
     }
 })
 export default class extends React.Component {
@@ -36,6 +37,7 @@ export default class extends React.Component {
     }
 
     openSetting(path){
+        //open control panel 
         if (this.state.schFieldCls == "panel col-md-12"){
             this.setState({
                 mainFieldCls:"col-md-offset-2 col-md-8",
@@ -45,7 +47,13 @@ export default class extends React.Component {
                 this.setState({
                     settingField:!this.state.settingField
                 })
-                browserHistory.push(path);
+                if (this.props.loginUser === "None"){
+                    //redirect to login page if user isn't authenticated
+                    browserHistory.push('/cp/login');
+                }else{
+                    //to requested path
+                    browserHistory.push(path);
+                }
             },500);
             
         }else{
@@ -60,15 +68,25 @@ export default class extends React.Component {
     }
 
     componentDidMount(){
-        //redirect to control panel based on url
-        
-        if (this.props.location.pathname != "/"){
+        //check user authentication
+        //redirect to control panel path based on url
+         $.get(`/user/loginStatus`, r =>{
+            if (r.status === "ok"){
+                this.props.dispatch(login(r.user));
+            }else{
+                if (this.props.location.pathname != "/"){
+                    browserHistory.push('/cp/login');
+                }
+            }
+         });
+         if (this.props.location.pathname != "/"){
             this.setState({
                 mainFieldCls:"col-md-offset-2 col-md-8",
                 schFieldCls:"panel col-md-6",
                 settingField:!this.state.settingField
             });
-        }
+         }
+
     }
 
 
@@ -98,9 +116,12 @@ export default class extends React.Component {
                                 <ReactCSSTransitionGroup transitionName="cp" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                                 <br />
                                 <ul className="nav nav-tabs" style={{borderBottomColor:"#2e6da4"}}>
+                                    <li><Link to='/cp/user' activeClassName="active" activeStyle={ linksStyle }>User</Link></li>
                                     <li><Link to='/cp/add' activeClassName="active" activeStyle={ linksStyle }>New</Link></li>
                                     <li><Link to='/cp/modify' activeClassName="active" activeStyle={ linksStyle }>Modify</Link></li>
-                                    <li><Link to='/cp/user' activeClassName="active" activeStyle={ linksStyle }>User</Link></li>
+                                    {this.props.loginUser != "None" &&
+                                        <li className='pull-right'><a href='/user/logout'>Logout</a></li>
+                                    }
                                 </ul>
                                 <br />
                                 {this.props.children}

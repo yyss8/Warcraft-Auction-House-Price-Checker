@@ -41,12 +41,23 @@ const updateTimeReducer = (state="None",action) =>{
     }
 }
 
+const loginReducer = (state="None",action) => {
+    switch (action.type){
+        case "login":
+            return action.user
+            break;
+        default:
+            return state
+    }
+}
+
 
 const reducers = combineReducers({
-    "selectedItem":selectedItemReducer,
-    "itemComps":itemCompsReducer,
-    "compPrice":compPriceReducer,
-    "updateTime":updateTimeReducer
+    selectedItem:selectedItemReducer,
+    itemComps:itemCompsReducer,
+    compPrice:compPriceReducer,
+    updateTime:updateTimeReducer,
+    login:loginReducer
 })
 
 const store = createStore(reducers);
