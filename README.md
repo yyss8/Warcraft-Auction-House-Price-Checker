@@ -1,6 +1,6 @@
 # Warcraft-Auction-House-Price-Checker
 
-    compare item's AH price with cumulative price of its component items 
+    compare item's AH price with its cumulative price of component items 
 
 Demo: http://wow.scitnet.com
 
