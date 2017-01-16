@@ -16,7 +16,7 @@ export default class extends React.Component{
             loadingCls:"fa fa-circle-o-notch fa-spin",
             hasError:false,
             errorMsg:""
-        }
+        };
     }
 
     passWordOnChange(e){
@@ -33,7 +33,6 @@ export default class extends React.Component{
 
     componentDidMount(){
         $.get(`/user/data/${this.props.login}`,r =>{
-            console.log(r);
             const password = r.result.A_Password === undefined ? "":r.result.A_Password;
             this.setState({
                 password
@@ -55,20 +54,20 @@ export default class extends React.Component{
                 if (result.status == "ok"){
                     this.setState({
                         loadingCls:"fa fa-check"
-                    })
+                    });
                 }else{
                     this.setState({
                         hasError:true,
                         loadingCls:"fa fa-ban",
                         errorMsg:result.content
-                    })
+                    });
                 }
                 setTimeout(() =>{
                     this.setState({
                         loadingCls:"fa fa-circle-o-notch fa-spin",
                         isLoading:false
                     });
-                },3000)
+                },3000);
             }
         });
     }

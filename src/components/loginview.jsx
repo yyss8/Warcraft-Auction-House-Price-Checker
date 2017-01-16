@@ -10,14 +10,14 @@ import { browserHistory } from 'react-router'
 })
 export default class extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
             result:"",
             username:"",
             password:"",
             hasError:false,
             hasMsg:false
-        }
+        };
     }
 
     userNameOnChange(e){
@@ -41,24 +41,24 @@ export default class extends React.Component{
             this.setState({
                 hasError:true,
                 result:"Enter Password"
-            })
+            });
         }else if (this.state.password == ""){
             this.setState({
                 hasError:true,
                 result:"Enter Username"
-            })
+            });
         }else{
             $.get(`/user/login?username=${this.state.username}&password=${this.state.password}` , r => {
                 if (r.status != "ok"){
                     this.setState({
                         hasError:true,
                         result:r.content
-                    })
+                    });
                 }else{
                     this.setState({
                         hasMsg:true,
                         result:r.content
-                    })
+                    });
                     this.props.dispatch(login(r.user));
                     browserHistory.push('/cp/add');
                 }

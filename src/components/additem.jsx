@@ -4,7 +4,7 @@ import ProfList from './minorcomponents/professionselect.jsx';
 
 function formValid(callback){
     let hasError = true;
-    let errMsg = ""
+    let errMsg = "";
     $("#addItemForm :input[required]:visible").each(function(){
         if ($(this).val() == ""){
             $(this).focus();
@@ -14,7 +14,7 @@ function formValid(callback){
         }else if (isNaN($(this).val())){
             $(this).focus();
             hasError = false;
-            errMsg = "Item Info Must Be A Number"
+            errMsg = "Item Info Must Be A Number";
             return false
         }
     });
@@ -23,7 +23,7 @@ function formValid(callback){
 
 export default class extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
             mainItem:"",
             mainQt:1,
@@ -33,7 +33,7 @@ export default class extends React.Component{
             loadingCls:"fa fa-circle-o-notch fa-spin",
             hasError:false,
             errorMsg:""
-        }
+        };
 
         this.clearItem = this.clearItem.bind(this);
         this.saveItem = this.saveItem.bind(this);
@@ -119,7 +119,7 @@ export default class extends React.Component{
             this.setState({
                 hasError:true,
                 errorMsg:"Select A Profession"                
-            })
+            });
         }else{
             formValid(validation => {
                 //check all inputs are filled
@@ -139,27 +139,27 @@ export default class extends React.Component{
                             if (result.status == "ok"){
                                 this.setState({
                                     loadingCls:"fa fa-check"
-                                })
+                                });
                             }else{
                                 this.setState({
                                     hasError:true,
                                     loadingCls:"fa fa-ban",
                                     errorMsg:`Error Happened with Item: ${result.item}`
-                                })
+                                });
                             }
                             setTimeout(() =>{
                                 this.setState({
                                     loadingCls:"fa fa-circle-o-notch fa-spin",
                                     isLoading:false
                                 });
-                            },3000)
+                            },3000);
                         }
                     });
                 }else{
                     this.setState({
                         hasError:true,
                         errorMsg:validation.content
-                    })
+                    });
                 }
             })
         }
