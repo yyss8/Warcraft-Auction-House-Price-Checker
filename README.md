@@ -1,5 +1,7 @@
 # Warcraft-Auction-House-Price-Checker
 
+    compare item's AH price with cumulative price of its component items 
+
 Demo: http://wow.scitnet.com
 
 # Languages Involved
@@ -9,7 +11,16 @@ Back-end: Nodejs
 
 Database: Mongodb
 
-# 01-14-17 Updates:
+# Latest Version 1.0.0 (01/15/17)
+
+### 01-15-17 Updates:
+  1. Control panel finished
+  
+  2. add user authentication to access control panel
+  
+  3. Bug Fixes
+
+### 01-14-17 Updates:
   1. Control panel for modifing items finished
   
   2. AH price added for main item to compare with comp price
@@ -18,7 +29,7 @@ Database: Mongodb
   
   4. layout adjusted
 
-# 01-12-17 Updates:
+### 01-12-17 Updates:
   1. React-Router added for control panel routing.
   
   2. Simple Control Panel Added For Modifing Items (Not Finished).
@@ -28,7 +39,7 @@ Database: Mongodb
   4. Bugs Fixes
 
 
-# 01-11-17 Updates:
+### 01-11-17 Updates:
   1. New Search Method Added
   
   Search result from user typing only include up to 8 matched results.
