@@ -17,9 +17,9 @@ Database: Mongodb
 ### 01-15-17 Updates:
   1. Control panel finished
   
-  2. add user authentication to access control panel
+  2.  add user authentication to access control panel
   
-  3. Bug Fixes
+  3.  Bug Fixes
 
 ### 01-14-17 Updates:
   1. Control panel for modifing items finished
