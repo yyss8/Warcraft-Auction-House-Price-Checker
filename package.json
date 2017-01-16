@@ -1,7 +1,7 @@
 {
-  "name": "js",
-  "version": "0.0.0",
-  "private": true,
+  "name": "Warcraft-Auction-House-Price-Checker",
+  "version": "1.0.0",
+  "private": false,
   "scripts": {
     "start": "node ./app.js"
   },
