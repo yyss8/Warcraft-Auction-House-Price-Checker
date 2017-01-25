@@ -5,7 +5,7 @@
 
 Demo: http://wow.scitnet.com
 
-# Languages Involved
+# Technology Stacks
 Front-End: Javascript/Bootstrap/Jquery/React/Redux/React-Router
 
 Back-end: Nodejs
